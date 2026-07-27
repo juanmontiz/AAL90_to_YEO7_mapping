@@ -1,0 +1,247 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{hyperref}
+
+\setlength{\emergencystretch}{3em}
+\newcommand{\aal}[1]{\texttt{#1}}
+
+\title{AAL90 to Yeo7 mapping}
+\author{Juan Manuel Mnti}
+\date{July 27, 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Description of the mapping of AAL90 brain regions into the canonical Yeo 7-network
+resting-state parcellation, with an optional subcortical extension for full 90-parcel
+coverage.
+\end{abstract}
+
+\section*{Definition of the Yeo7 networks}
+
+We parcellated the brain into 90 cortical and subcortical regions using the Automated
+Anatomical Labeling (AAL) atlas in MNI space~\cite{tzourio2002,rolls2020}, and assigned
+each cortical parcel to one of the seven canonical resting-state networks defined by
+Yeo et al.~\cite{yeo2011} from clustering of resting-state functional connectivity in
+1000 subjects. Four subcortical structures (Caudate, Putamen, Pallidum, Thalamus) have
+no cortical Yeo7 assignment; we group them separately as a \emph{Subcortical extension}
+so that analyses requiring full 90-parcel coverage are not forced to drop them. In
+particular, we defined the following bilateral networks in terms of AAL90 regions (left
+and right hemispheres):
+
+\subsection*{Visual.}
+The visual network comprised occipital cortex including primary and higher-order visual
+areas~\cite{yeo2011}, namely bilateral \aal{Calcarine}, \aal{Cuneus}, \aal{Lingual},
+\aal{Occipital\_Sup}, \aal{Occipital\_Mid}, \aal{Occipital\_Inf}, and \aal{Fusiform}.
+
+\subsection*{Somatomotor.}
+The somatomotor network comprised precentral, postcentral, and supplementary motor
+regions, together with the opercular and auditory-adjacent parcels that load onto the
+Yeo7 somatomotor component~\cite{yeo2011}. We included bilateral \aal{Precentral},
+\aal{Rolandic\_Oper}, \aal{Supp\_Motor\_Area}, \aal{Postcentral},
+\aal{Paracentral\_Lobule}, and \aal{Heschl}.
+
+\subsection*{Dorsal attention.}
+The dorsal attention network was defined as superior and inferior parietal regions,
+approximating the intraparietal sulcus system described in attentional control
+studies~\cite{corbetta2002}. We included bilateral \aal{Parietal\_Sup} and
+\aal{Parietal\_Inf}.
+
+\subsection*{Ventral attention / Salience.}
+The ventral attention / salience network comprised anterior insula, cingulate, and
+opercular regions, consistent with insula--anterior cingulate models of the salience
+system~\cite{seeley2007}, together with the superior temporal parcels that fall in the
+Yeo7 ventral attention component. We included bilateral \aal{Insula},
+\aal{Cingulum\_Ant}, \aal{Cingulum\_Mid}, \aal{SupraMarginal}, and \aal{Temporal\_Sup}.
+
+\subsection*{Limbic.}
+The limbic network comprised orbitofrontal, temporal pole, and medial temporal regions,
+in line with the Yeo7 limbic component~\cite{yeo2011}. We included bilateral
+\aal{Frontal\_Sup\_Orb}, \aal{Frontal\_Mid\_Orb}, \aal{Frontal\_Inf\_Orb},
+\aal{Olfactory}, \aal{Frontal\_Med\_Orb}, \aal{Rectus}, \aal{Amygdala},
+\aal{Temporal\_Pole\_Sup}, and \aal{Temporal\_Pole\_Mid}.
+
+\subsection*{Frontal control.}
+The frontal control (frontoparietal) network was defined as dorsolateral and inferior
+frontal regions~\cite{yeo2011}, including bilateral \aal{Frontal\_Sup},
+\aal{Frontal\_Mid}, \aal{Frontal\_Inf\_Oper}, and \aal{Frontal\_Inf\_Tri}. These parcels
+approximate dorsolateral prefrontal cortex within the AAL scheme.
+
+\subsection*{Default mode.}
+The default mode network comprised medial prefrontal, posterior cingulate/precuneus,
+inferior parietal, and medial temporal regions, in line with canonical DMN
+descriptions~\cite{raichle2001,yeo2011}. We included bilateral
+\aal{Frontal\_Sup\_Medial}, \aal{Cingulum\_Post}, \aal{Hippocampus},
+\aal{ParaHippocampal}, \aal{Angular}, \aal{Precuneus}, \aal{Temporal\_Mid}, and
+\aal{Temporal\_Inf}.
+
+\subsection*{Subcortical extension (non-Yeo7).}
+Caudate, Putamen, Pallidum, and Thalamus are not part of the cortical Yeo7 parcellation.
+When full 90-parcel coverage is required we group bilateral \aal{Caudate},
+\aal{Putamen}, \aal{Pallidum}, and \aal{Thalamus} into a separate \emph{Subcortical
+extension} network rather than force them into a cortical network they do not belong
+to.
+
+\section*{Reference tables}
+
+For transparency and reproducibility, the full list of AAL90 parcels belonging to each
+network (and their indices in the AAL-90 ordering) is provided in
+Table~\ref{tab:yeo7}.
+
+\begin{longtable}{lll}
+\caption{Assignment of AAL-90 parcels to Yeo7 networks. Indices refer to the 1-based
+position in the AAL-90 non-symmetric ordering (Left then Right).}
+\label{tab:yeo7}\\
+\toprule
+Network & AAL label & AAL index \\
+\midrule
+\endfirsthead
+\toprule
+Network & AAL label & AAL index \\
+\midrule
+\endhead
+\midrule
+\multicolumn{3}{r}{\emph{continued on next page}} \\
+\endfoot
+\bottomrule
+\endlastfoot
+Default Mode & Frontal\_Sup\_Medial\_L & 12 \\
+ & Frontal\_Sup\_Medial\_R & 57 \\
+ & Cingulum\_Post\_L & 18 \\
+ & Cingulum\_Post\_R & 63 \\
+ & Hippocampus\_L & 19 \\
+ & Hippocampus\_R & 64 \\
+ & ParaHippocampal\_L & 20 \\
+ & ParaHippocampal\_R & 65 \\
+ & Angular\_L & 33 \\
+ & Angular\_R & 78 \\
+ & Precuneus\_L & 34 \\
+ & Precuneus\_R & 79 \\
+ & Temporal\_Mid\_L & 43 \\
+ & Temporal\_Mid\_R & 88 \\
+ & Temporal\_Inf\_L & 45 \\
+ & Temporal\_Inf\_R & 90 \\
+\midrule
+Dorsal Attention & Parietal\_Sup\_L & 30 \\
+ & Parietal\_Sup\_R & 75 \\
+ & Parietal\_Inf\_L & 31 \\
+ & Parietal\_Inf\_R & 76 \\
+\midrule
+Ventral Attention / Salience & Insula\_L & 15 \\
+ & Insula\_R & 60 \\
+ & Cingulum\_Ant\_L & 16 \\
+ & Cingulum\_Ant\_R & 61 \\
+ & Cingulum\_Mid\_L & 17 \\
+ & Cingulum\_Mid\_R & 62 \\
+ & SupraMarginal\_L & 32 \\
+ & SupraMarginal\_R & 77 \\
+ & Temporal\_Sup\_L & 41 \\
+ & Temporal\_Sup\_R & 86 \\
+\midrule
+Frontal Control & Frontal\_Sup\_L & 2 \\
+ & Frontal\_Sup\_R & 47 \\
+ & Frontal\_Mid\_L & 4 \\
+ & Frontal\_Mid\_R & 49 \\
+ & Frontal\_Inf\_Oper\_L & 6 \\
+ & Frontal\_Inf\_Oper\_R & 51 \\
+ & Frontal\_Inf\_Tri\_L & 7 \\
+ & Frontal\_Inf\_Tri\_R & 52 \\
+\midrule
+Limbic & Frontal\_Sup\_Orb\_L & 3 \\
+ & Frontal\_Sup\_Orb\_R & 48 \\
+ & Frontal\_Mid\_Orb\_L & 5 \\
+ & Frontal\_Mid\_Orb\_R & 50 \\
+ & Frontal\_Inf\_Orb\_L & 8 \\
+ & Frontal\_Inf\_Orb\_R & 53 \\
+ & Olfactory\_L & 11 \\
+ & Olfactory\_R & 56 \\
+ & Frontal\_Med\_Orb\_L & 13 \\
+ & Frontal\_Med\_Orb\_R & 58 \\
+ & Rectus\_L & 14 \\
+ & Rectus\_R & 59 \\
+ & Amygdala\_L & 21 \\
+ & Amygdala\_R & 66 \\
+ & Temporal\_Pole\_Sup\_L & 42 \\
+ & Temporal\_Pole\_Sup\_R & 87 \\
+ & Temporal\_Pole\_Mid\_L & 44 \\
+ & Temporal\_Pole\_Mid\_R & 89 \\
+\midrule
+Somatomotor & Precentral\_L & 1 \\
+ & Precentral\_R & 46 \\
+ & Rolandic\_Oper\_L & 9 \\
+ & Rolandic\_Oper\_R & 54 \\
+ & Supp\_Motor\_Area\_L & 10 \\
+ & Supp\_Motor\_Area\_R & 55 \\
+ & Postcentral\_L & 29 \\
+ & Postcentral\_R & 74 \\
+ & Paracentral\_Lobule\_L & 35 \\
+ & Paracentral\_Lobule\_R & 80 \\
+ & Heschl\_L & 40 \\
+ & Heschl\_R & 85 \\
+\midrule
+Visual & Calcarine\_L & 22 \\
+ & Calcarine\_R & 67 \\
+ & Cuneus\_L & 23 \\
+ & Cuneus\_R & 68 \\
+ & Lingual\_L & 24 \\
+ & Lingual\_R & 69 \\
+ & Occipital\_Sup\_L & 25 \\
+ & Occipital\_Sup\_R & 70 \\
+ & Occipital\_Mid\_L & 26 \\
+ & Occipital\_Mid\_R & 71 \\
+ & Occipital\_Inf\_L & 27 \\
+ & Occipital\_Inf\_R & 72 \\
+ & Fusiform\_L & 28 \\
+ & Fusiform\_R & 73 \\
+\midrule
+Subcortical extension & Caudate\_L & 36 \\
+ & Caudate\_R & 81 \\
+ & Putamen\_L & 37 \\
+ & Putamen\_R & 82 \\
+ & Pallidum\_L & 38 \\
+ & Pallidum\_R & 83 \\
+ & Thalamus\_L & 39 \\
+ & Thalamus\_R & 84 \\
+\end{longtable}
+
+\begin{thebibliography}{9}
+
+\bibitem{yeo2011}
+B. T. Thomas Yeo, Fenna M. Krienen, Jorge Sepulcre, Mert R. Sabuncu, Danial Lashkari,
+Marisa Hollinshead, Joshua L. Roffman, Jordan W. Smoller, Lilla Z\"{o}llei, Jonathan R.
+Polimeni, Bruce Fischl, Hesheng Liu, and Randy L. Buckner. The organization of the human
+cerebral cortex estimated by intrinsic functional connectivity. \emph{Journal of
+Neurophysiology}, 106(3):1125--1165, 2011.
+
+\bibitem{tzourio2002}
+N. Tzourio-Mazoyer, B. Landeau, D. Papathanassiou, F. Crivello, O. Etard, N. Delcroix,
+B. Mazoyer, and M. Joliot. Automated anatomical labeling of activations in SPM using a
+macroscopic anatomical parcellation of the MNI MRI single-subject brain.
+\emph{NeuroImage}, 15(1):273--289, 2002.
+
+\bibitem{rolls2020}
+Edmund T. Rolls, Ching-Chang Huang, Chia-Chien Lin, Jian Feng, and Marc Joliot.
+Automated anatomical labelling atlas 3. \emph{NeuroImage}, 206:116189, 2020.
+
+\bibitem{raichle2001}
+Marcus E. Raichle, Ann M. MacLeod, Abraham Z. Snyder, William J. Powers, Debra A.
+Gusnard, and Gordon L. Shulman. A default mode of brain function. \emph{Proceedings of
+the National Academy of Sciences of the United States of America}, 98(2):676--682,
+2001.
+
+\bibitem{corbetta2002}
+Maurizio Corbetta and Gordon L. Shulman. Control of goal-directed and stimulus-driven
+attention in the brain. \emph{Nature Reviews Neuroscience}, 3(3):201--215, 2002.
+
+\bibitem{seeley2007}
+William W. Seeley, Vinod Menon, Alan F. Schatzberg, Jeffrey Keller, Gary H. Glover,
+Hilary Kenna, Allan L. Reiss, and Michael D. Greicius. Dissociable intrinsic
+connectivity networks for salience processing and executive control. \emph{Journal of
+Neuroscience}, 27(9):2349--2356, 2007.
+
+\end{thebibliography}
+
+\end{document}
