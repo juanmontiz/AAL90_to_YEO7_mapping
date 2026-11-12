@@ -1,10 +1,17 @@
 """
 AAL90 parcel-ordering inference.
 
-Discriminates between two conventions for a 90-region AAL matrix / time series:
+Discriminates between three conventions for a 90-region AAL matrix / time series:
 
     'non-symmetric LLRR' : L1..L45, R1..R45     (contiguous hemispheric blocks)
+    'mirrored LLRR'      : L1..L45, R45..R1     (blocks, right half reversed)
     'symmetric LRLR'     : L1, R1, L2, R2, ...  (interleaved; SPM/AAL native)
+
+LLRR and mirrored have identical hemisphere blocks, so block density cannot
+separate them. They are separated by homotopic structure: with the right order
+the LL block is a near copy of the RR block (Spearman LL~RR ~0.9 on SC vs ~0.1
+for the wrong one). SC_AAL90.mat (and the sleep W/N1/N2/N3 and COMA AAL90
+data it accompanies) is MIRRORED.
 
 NOTE ON TERMINOLOGY
 -------------------
@@ -39,6 +46,7 @@ N_HEMI = N_AAL90 // 2  # 45 regions per hemisphere
 # Ordering labels (compare against these constants, never against literals)
 # ─────────────────────────────────────────────────────────────────────────────
 ORDER_LLRR = "non-symmetric LLRR"
+ORDER_MIRR = "mirrored LLRR"
 ORDER_LRLR = "symmetric LRLR"
 ORDER_UNDET = "undetermined"
 
@@ -49,6 +57,12 @@ ORDER_UNDET = "undetermined"
 def _deinterleave_perm(n: int = N_AAL90) -> np.ndarray:
     """LRLR -> LLRR. p[i] = index into the original (interleaved) matrix."""
     return np.r_[np.arange(0, n, 2), np.arange(1, n, 2)]
+
+
+def _unmirror_perm(n: int = N_AAL90) -> np.ndarray:
+    """mirrored (L1..L45, R45..R1) -> LLRR. p[i] = index into the original."""
+    h = n // 2
+    return np.r_[np.arange(h), np.arange(n - 1, h - 1, -1)]
 
 
 def _interleave_perm(n: int = N_AAL90) -> np.ndarray:
@@ -152,11 +166,12 @@ def infer_aal90_order(SC, verbose: bool = True, margin_tol: float = 0.30,
 
     Returns
     -------
-    order : {'non-symmetric LLRR', 'symmetric LRLR', 'undetermined'}
-        Use the module constants ORDER_LLRR / ORDER_LRLR / ORDER_UNDET for
-        comparisons rather than string literals.
+    order : {'non-symmetric LLRR', 'mirrored LLRR', 'symmetric LRLR', 'undetermined'}
+        Use the module constants ORDER_LLRR / ORDER_MIRR / ORDER_LRLR /
+        ORDER_UNDET for comparisons rather than string literals.
     info : dict
         'LLRR', 'LRLR'        : component-score dicts (machine-friendly keys)
+        'rho_LLRR', 'rho_MIRR': Spearman LL~RR under plain vs mirrored right half
         'margin'              : |total_LLRR - total_LRLR|
         'permutation_to_LLRR' : ndarray to canonicalize, or None if undetermined
         'asymmetry'           : relative asymmetry of the input (SC vs SC.T)
@@ -194,6 +209,14 @@ def infer_aal90_order(SC, verbose: bool = True, margin_tol: float = 0.30,
     else:
         order, perm_out = ORDER_LRLR, perm
 
+    # Blocks found: LLRR vs mirrored differ only in the right-half order.
+    # Decide by homotopic LL~RR similarity.
+    pm = _unmirror_perm()
+    rho_llrr = _intrahemispheric_homology(M)
+    rho_mirr = _intrahemispheric_homology(M[np.ix_(pm, pm)])
+    if order == ORDER_LLRR and rho_mirr > rho_llrr:
+        order, perm_out = ORDER_MIRR, pm
+
     if verbose:
         print(f"Input asymmetry (SC vs SC.T) : {asym:.2e}")
         print()
@@ -205,6 +228,7 @@ def infer_aal90_order(SC, verbose: bool = True, margin_tol: float = 0.30,
         print(f"  {'TOTAL':24s}{s_llrr['total']:>12.4f}{s_lrlr['total']:>12.4f}")
         print()
         print(f"Decision margin              : {margin:.4f}  (tol = {margin_tol})")
+        print(f"Spearman LL~RR LLRR/mirrored : {rho_llrr:.4f} / {rho_mirr:.4f}")
         print(f"Inferred ordering            : {order}")
         if order == ORDER_UNDET:
             print("  -> Scores too close. Resolve against the atlas label file.")
@@ -213,6 +237,8 @@ def infer_aal90_order(SC, verbose: bool = True, margin_tol: float = 0.30,
         "LLRR": s_llrr,
         "LRLR": s_lrlr,
         "margin": margin,
+        "rho_LLRR": rho_llrr,
+        "rho_MIRR": rho_mirr,
         "permutation_to_LLRR": perm_out,
         "asymmetry": asym,
     }
@@ -289,10 +315,33 @@ def order_from_centroids(xyz):
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# Guard: label list vs data order
+# ─────────────────────────────────────────────────────────────────────────────
+def assert_aal90_order(labels, M, min_r=0.8):
+    """Left/right sub-matrices, matched by region NAME, must be near copies.
+
+    M : (90, 90) SC, FC or Ceff in data-column order; labels : label list in
+    the order assumed for M. Returns the LL~RR Pearson r (|M|).
+    Correct (mirrored) order on SC_AAL90.mat: 0.97; LLRR: 0.19.
+    """
+    labels = list(labels)
+    idx = {l: i for i, l in enumerate(labels)}
+    base = [l[:-2] for l in labels if l.endswith("_L")]
+    L = [idx[b + "_L"] for b in base]
+    R = [idx[b + "_R"] for b in base]
+    iu = np.triu_indices(len(base), 1)
+    A = np.abs(np.asarray(M, dtype=float))
+    r = np.corrcoef(A[np.ix_(L, L)][iu], A[np.ix_(R, R)][iu])[0, 1]
+    assert r > min_r, f"label order does not match data: LL~RR r = {r:.2f}"
+    return r
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # Legacy label mapping (for downstream code keyed to the original strings)
 # ─────────────────────────────────────────────────────────────────────────────
 LEGACY_LABELS = {
     ORDER_LLRR: "non-symmetric",
+    ORDER_MIRR: "mirrored",
     ORDER_LRLR: "symmetric",
     ORDER_UNDET: None,
 }

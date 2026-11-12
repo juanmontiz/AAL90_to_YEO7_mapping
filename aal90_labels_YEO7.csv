@@ -1,0 +1,91 @@
+index,label,class,yeo7_network,yeo7_network_name,overlap_frac,yeo_coverage,source
+1,Precentral_L,cortical,2,Somatomotor,0.597,0.741,overlap
+2,Frontal_Sup_L,cortical,7,Default,0.500,0.728,overlap
+3,Frontal_Sup_Orb_L,cortical,5,Limbic,0.716,0.804,overlap
+4,Frontal_Mid_L,cortical,6,Frontoparietal,0.642,0.814,overlap
+5,Frontal_Mid_Orb_L,cortical,6,Frontoparietal,0.649,0.807,overlap
+6,Frontal_Inf_Oper_L,cortical,6,Frontoparietal,0.379,0.775,overlap
+7,Frontal_Inf_Tri_L,cortical,6,Frontoparietal,0.572,0.738,overlap
+8,Frontal_Inf_Orb_L,cortical,7,Default,0.597,0.755,overlap
+9,Rolandic_Oper_L,cortical,2,Somatomotor,0.700,0.866,overlap
+10,Supp_Motor_Area_L,cortical,2,Somatomotor,0.402,0.766,overlap
+11,Olfactory_L,cortical,5,Limbic,0.943,0.455,overlap
+12,Frontal_Sup_Medial_L,cortical,7,Default,0.841,0.789,overlap
+13,Frontal_Med_Orb_L,cortical,7,Default,0.734,0.804,overlap
+14,Rectus_L,cortical,5,Limbic,0.917,0.867,overlap
+15,Insula_L,cortical,4,Ventral attention,0.617,0.863,overlap
+16,Cingulum_Ant_L,cortical,7,Default,0.692,0.840,overlap
+17,Cingulum_Mid_L,cortical,4,Ventral attention,0.449,0.886,overlap
+18,Cingulum_Post_L,cortical,7,Default,0.967,0.611,overlap
+19,Hippocampus_L,cortical,7,Default,0.329,0.022,convention (low Yeo coverage)
+20,ParaHippocampal_L,cortical,5,Limbic,0.537,0.684,overlap
+21,Amygdala_L,cortical,5,Limbic,1.000,0.037,convention (low Yeo coverage)
+22,Calcarine_L,cortical,1,Visual,0.947,0.801,overlap
+23,Cuneus_L,cortical,1,Visual,0.894,0.842,overlap
+24,Lingual_L,cortical,1,Visual,0.998,0.837,overlap
+25,Occipital_Sup_L,cortical,1,Visual,0.877,0.753,overlap
+26,Occipital_Mid_L,cortical,1,Visual,0.745,0.834,overlap
+27,Occipital_Inf_L,cortical,1,Visual,0.944,0.799,overlap
+28,Fusiform_L,cortical,1,Visual,0.621,0.867,overlap
+29,Postcentral_L,cortical,2,Somatomotor,0.783,0.789,overlap
+30,Parietal_Sup_L,cortical,3,Dorsal attention,0.779,0.815,overlap
+31,Parietal_Inf_L,cortical,6,Frontoparietal,0.483,0.926,overlap
+32,SupraMarginal_L,cortical,4,Ventral attention,0.599,0.854,overlap
+33,Angular_L,cortical,7,Default,0.779,0.834,overlap
+34,Precuneus_L,cortical,7,Default,0.375,0.800,overlap
+35,Paracentral_Lobule_L,cortical,2,Somatomotor,0.933,0.681,overlap
+36,Caudate_L,subcortical,,,,0.011,subcortical
+37,Putamen_L,subcortical,,,,0.014,subcortical
+38,Pallidum_L,subcortical,,,,0.000,subcortical
+39,Thalamus_L,subcortical,,,,0.000,subcortical
+40,Heschl_L,cortical,2,Somatomotor,0.988,0.920,overlap
+41,Temporal_Sup_L,cortical,2,Somatomotor,0.627,0.864,overlap
+42,Temporal_Pole_Sup_L,cortical,5,Limbic,0.550,0.733,overlap
+43,Temporal_Mid_L,cortical,7,Default,0.568,0.832,overlap
+44,Temporal_Pole_Mid_L,cortical,5,Limbic,0.647,0.741,overlap
+45,Temporal_Inf_L,cortical,5,Limbic,0.361,0.829,overlap
+46,Temporal_Inf_R,cortical,5,Limbic,0.361,0.829,overlap
+47,Temporal_Pole_Mid_R,cortical,5,Limbic,0.647,0.741,overlap
+48,Temporal_Mid_R,cortical,7,Default,0.568,0.832,overlap
+49,Temporal_Pole_Sup_R,cortical,5,Limbic,0.550,0.733,overlap
+50,Temporal_Sup_R,cortical,2,Somatomotor,0.627,0.864,overlap
+51,Heschl_R,cortical,2,Somatomotor,0.988,0.920,overlap
+52,Thalamus_R,subcortical,,,,0.000,subcortical
+53,Pallidum_R,subcortical,,,,0.000,subcortical
+54,Putamen_R,subcortical,,,,0.014,subcortical
+55,Caudate_R,subcortical,,,,0.011,subcortical
+56,Paracentral_Lobule_R,cortical,2,Somatomotor,0.933,0.681,overlap
+57,Precuneus_R,cortical,7,Default,0.375,0.800,overlap
+58,Angular_R,cortical,7,Default,0.779,0.834,overlap
+59,SupraMarginal_R,cortical,4,Ventral attention,0.599,0.854,overlap
+60,Parietal_Inf_R,cortical,6,Frontoparietal,0.483,0.926,overlap
+61,Parietal_Sup_R,cortical,3,Dorsal attention,0.779,0.815,overlap
+62,Postcentral_R,cortical,2,Somatomotor,0.783,0.789,overlap
+63,Fusiform_R,cortical,1,Visual,0.621,0.867,overlap
+64,Occipital_Inf_R,cortical,1,Visual,0.944,0.799,overlap
+65,Occipital_Mid_R,cortical,1,Visual,0.745,0.834,overlap
+66,Occipital_Sup_R,cortical,1,Visual,0.877,0.753,overlap
+67,Lingual_R,cortical,1,Visual,0.998,0.837,overlap
+68,Cuneus_R,cortical,1,Visual,0.894,0.842,overlap
+69,Calcarine_R,cortical,1,Visual,0.947,0.801,overlap
+70,Amygdala_R,cortical,5,Limbic,1.000,0.037,convention (low Yeo coverage)
+71,ParaHippocampal_R,cortical,5,Limbic,0.537,0.684,overlap
+72,Hippocampus_R,cortical,7,Default,0.329,0.022,convention (low Yeo coverage)
+73,Cingulum_Post_R,cortical,7,Default,0.967,0.611,overlap
+74,Cingulum_Mid_R,cortical,4,Ventral attention,0.449,0.886,overlap
+75,Cingulum_Ant_R,cortical,7,Default,0.692,0.840,overlap
+76,Insula_R,cortical,4,Ventral attention,0.617,0.863,overlap
+77,Rectus_R,cortical,5,Limbic,0.917,0.867,overlap
+78,Frontal_Med_Orb_R,cortical,7,Default,0.734,0.804,overlap
+79,Frontal_Sup_Medial_R,cortical,7,Default,0.841,0.789,overlap
+80,Olfactory_R,cortical,5,Limbic,0.943,0.455,overlap
+81,Supp_Motor_Area_R,cortical,2,Somatomotor,0.402,0.766,overlap
+82,Rolandic_Oper_R,cortical,2,Somatomotor,0.700,0.866,overlap
+83,Frontal_Inf_Orb_R,cortical,7,Default,0.597,0.755,overlap
+84,Frontal_Inf_Tri_R,cortical,6,Frontoparietal,0.572,0.738,overlap
+85,Frontal_Inf_Oper_R,cortical,6,Frontoparietal,0.379,0.775,overlap
+86,Frontal_Mid_Orb_R,cortical,6,Frontoparietal,0.649,0.807,overlap
+87,Frontal_Mid_R,cortical,6,Frontoparietal,0.642,0.814,overlap
+88,Frontal_Sup_Orb_R,cortical,5,Limbic,0.716,0.804,overlap
+89,Frontal_Sup_R,cortical,7,Default,0.500,0.728,overlap
+90,Precentral_R,cortical,2,Somatomotor,0.597,0.741,overlap

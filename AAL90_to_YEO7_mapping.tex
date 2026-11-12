@@ -1,246 +1,255 @@
-\documentclass[11pt]{article}
-\usepackage[margin=1in]{geometry}
+\documentclass[a4paper,10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[a4paper,left=20mm,right=20mm,top=20mm,bottom=20mm]{geometry}
 \usepackage{booktabs}
 \usepackage{longtable}
 \usepackage{hyperref}
 
-\setlength{\emergencystretch}{3em}
+\setlength{\emergencystretch}{6em}
 \newcommand{\aal}[1]{\texttt{#1}}
 
 \title{AAL90 to Yeo7 mapping}
-\author{Juan Manuel Mnti}
-\date{July 27, 2026}
+\author{Juan Manuel Monti}
+\date{Corrected version, November 12, 2026}
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
-Description of the mapping of AAL90 brain regions into the canonical Yeo 7-network
-resting-state parcellation, with an optional subcortical extension for full 90-parcel
-coverage.
+We assign each of the 90 cerebral regions of the Automated Anatomical Labeling atlas (AAL90) to one of the seven resting-state networks of Yeo et al.\ (Yeo7).
+Each region takes the network with which it shares the most voxels in MNI space.
+The four subcortical nuclei, which the cortical Yeo atlas does not cover, are left unassigned.
+This version replaces an earlier hand-made mapping (see Section~\ref{sec:changes}).
 \end{abstract}
 
-\section*{Definition of the Yeo7 networks}
+\section*{Atlases}
 
-We parcellated the brain into 90 cortical and subcortical regions using the Automated
-Anatomical Labeling (AAL) atlas in MNI space~\cite{tzourio2002,rolls2020}, and assigned
-each cortical parcel to one of the seven canonical resting-state networks defined by
-Yeo et al.~\cite{yeo2011} from clustering of resting-state functional connectivity in
-1000 subjects. Four subcortical structures (Caudate, Putamen, Pallidum, Thalamus) have
-no cortical Yeo7 assignment; we group them separately as a \emph{Subcortical extension}
-so that analyses requiring full 90-parcel coverage are not forced to drop them. In
-particular, we defined the following bilateral networks in terms of AAL90 regions (left
-and right hemispheres):
+Regions are defined by the AAL atlas (SPM12 version) in MNI space~\cite{tzourio2002}.
+Only its 90 cerebral labels are used; the cerebellar and vermis labels are ignored.
+Networks are defined by the 7-network parcellation of Yeo et al.~\cite{yeo2011}, which was obtained by clustering resting-state functional connectivity in 1000 healthy subjects.
+We use its liberal (``thick'') cortical mask in MNI152 FreeSurfer-conformed 1\,mm space.
+The seven networks are Visual, Somatomotor, Dorsal attention, Ventral attention (salience), Limbic, Frontoparietal (control) and Default.
 
-\subsection*{Visual.}
-The visual network comprised occipital cortex including primary and higher-order visual
-areas~\cite{yeo2011}, namely bilateral \aal{Calcarine}, \aal{Cuneus}, \aal{Lingual},
-\aal{Occipital\_Sup}, \aal{Occipital\_Mid}, \aal{Occipital\_Inf}, and \aal{Fusiform}.
+\section*{Assignment criterion}
 
-\subsection*{Somatomotor.}
-The somatomotor network comprised precentral, postcentral, and supplementary motor
-regions, together with the opercular and auditory-adjacent parcels that load onto the
-Yeo7 somatomotor component~\cite{yeo2011}. We included bilateral \aal{Precentral},
-\aal{Rolandic\_Oper}, \aal{Supp\_Motor\_Area}, \aal{Postcentral},
-\aal{Paracentral\_Lobule}, and \aal{Heschl}.
+No standard AAL90-to-Yeo7 table exists in the literature, and each study builds its own~\cite{doucet2019}.
+We use the most common objective rule, the largest spatial overlap between the two atlases.
+\begin{enumerate}
+\item The AAL atlas is resampled onto the 1\,mm Yeo grid with nearest-neighbour interpolation.
+\item For each AAL region, the voxels of the left and right homologues are pooled, so both hemispheres of a region receive the same network.
+\item The voxels of each Yeo network inside the region are counted, ignoring voxels outside the Yeo mask (label 0).
+The network with the most voxels is the region's network.
+\end{enumerate}
+Two exceptions apply.
+\begin{itemize}
+\item \aal{Caudate}, \aal{Putamen}, \aal{Pallidum} and \aal{Thalamus} are left \emph{unassigned}.
+The Yeo 2011 atlas is cortex-only and has no label for them.
+They remain in every region-level and whole-brain analysis but are excluded from network-level summaries, which therefore use 82 of the 90 regions.
+\item \aal{Hippocampus} and \aal{Amygdala} lie mostly outside the cortical Yeo mask (less than 10\% of their voxels carry a Yeo label), so their overlap is not reliable.
+By convention, \aal{Hippocampus} is assigned to Default and \aal{Amygdala} to Limbic.
+\end{itemize}
+The assignment is computed by \texttt{make\_aal90\_labels\_YEO7.py} and stored in \texttt{aal90\_labels\_YEO7.csv}, which is the reference for this document, for \texttt{YEO7\_AAL90.txt} and for the example notebook.
 
-\subsection*{Dorsal attention.}
-The dorsal attention network was defined as superior and inferior parietal regions,
-approximating the intraparietal sulcus system described in attentional control
-studies~\cite{corbetta2002}. We included bilateral \aal{Parietal\_Sup} and
-\aal{Parietal\_Inf}.
+\section*{Resulting networks}
 
-\subsection*{Ventral attention / Salience.}
-The ventral attention / salience network comprised anterior insula, cingulate, and
-opercular regions, consistent with insula--anterior cingulate models of the salience
-system~\cite{seeley2007}, together with the superior temporal parcels that fall in the
-Yeo7 ventral attention component. We included bilateral \aal{Insula},
-\aal{Cingulum\_Ant}, \aal{Cingulum\_Mid}, \aal{SupraMarginal}, and \aal{Temporal\_Sup}.
+All regions below are bilateral (left and right homologues).
 
-\subsection*{Limbic.}
-The limbic network comprised orbitofrontal, temporal pole, and medial temporal regions,
-in line with the Yeo7 limbic component~\cite{yeo2011}. We included bilateral
-\aal{Frontal\_Sup\_Orb}, \aal{Frontal\_Mid\_Orb}, \aal{Frontal\_Inf\_Orb},
-\aal{Olfactory}, \aal{Frontal\_Med\_Orb}, \aal{Rectus}, \aal{Amygdala},
-\aal{Temporal\_Pole\_Sup}, and \aal{Temporal\_Pole\_Mid}.
+\paragraph{Visual (14 regions).}
+\aal{Calcarine}, \aal{Cuneus}, \aal{Lingual}, \aal{Occipital\_Sup}, \aal{Occipital\_Mid}, \aal{Occipital\_Inf} and \aal{Fusiform}.
 
-\subsection*{Frontal control.}
-The frontal control (frontoparietal) network was defined as dorsolateral and inferior
-frontal regions~\cite{yeo2011}, including bilateral \aal{Frontal\_Sup},
-\aal{Frontal\_Mid}, \aal{Frontal\_Inf\_Oper}, and \aal{Frontal\_Inf\_Tri}. These parcels
-approximate dorsolateral prefrontal cortex within the AAL scheme.
+\paragraph{Somatomotor (14 regions).}
+\aal{Precentral}, \aal{Rolandic\_Oper}, \aal{Supp\_Motor\_Area}, \aal{Postcentral}, \aal{Paracentral\_Lobule}, \aal{Heschl} and \aal{Temporal\_Sup}.
+As in the original Yeo7 solution, auditory cortex (\aal{Heschl}, \aal{Temporal\_Sup}) falls in the somatomotor network~\cite{yeo2011}.
 
-\subsection*{Default mode.}
-The default mode network comprised medial prefrontal, posterior cingulate/precuneus,
-inferior parietal, and medial temporal regions, in line with canonical DMN
-descriptions~\cite{raichle2001,yeo2011}. We included bilateral
-\aal{Frontal\_Sup\_Medial}, \aal{Cingulum\_Post}, \aal{Hippocampus},
-\aal{ParaHippocampal}, \aal{Angular}, \aal{Precuneus}, \aal{Temporal\_Mid}, and
-\aal{Temporal\_Inf}.
+\paragraph{Dorsal attention (2 regions).}
+\aal{Parietal\_Sup}.
 
-\subsection*{Subcortical extension (non-Yeo7).}
-Caudate, Putamen, Pallidum, and Thalamus are not part of the cortical Yeo7 parcellation.
-When full 90-parcel coverage is required we group bilateral \aal{Caudate},
-\aal{Putamen}, \aal{Pallidum}, and \aal{Thalamus} into a separate \emph{Subcortical
-extension} network rather than force them into a cortical network they do not belong
-to.
+\paragraph{Ventral attention / salience (6 regions).}
+\aal{Insula}, \aal{Cingulum\_Mid} and \aal{SupraMarginal}.
 
-\section*{Reference tables}
+\paragraph{Limbic (16 regions).}
+\aal{Frontal\_Sup\_Orb}, \aal{Olfactory}, \aal{Rectus}, \aal{ParaHippocampal}, \aal{Amygdala} (by convention), \aal{Temporal\_Pole\_Sup}, \aal{Temporal\_Pole\_Mid} and \aal{Temporal\_Inf}.
 
-For transparency and reproducibility, the full list of AAL90 parcels belonging to each
-network (and their indices in the AAL-90 ordering) is provided in
-Table~\ref{tab:yeo7}.
+\paragraph{Frontoparietal control (10 regions).}
+\aal{Frontal\_Mid}, \aal{Frontal\_Mid\_Orb}, \aal{Frontal\_Inf\_Oper}, \aal{Frontal\_Inf\_Tri} and \aal{Parietal\_Inf}.
 
-\begin{longtable}{lll}
-\caption{Assignment of AAL-90 parcels to Yeo7 networks. Indices refer to the 1-based
-position in the AAL-90 non-symmetric ordering (Left then Right).}
+\paragraph{Default (20 regions).}
+\aal{Frontal\_Sup}, \aal{Frontal\_Inf\_Orb}, \aal{Frontal\_Sup\_Medial}, \aal{Frontal\_Med\_Orb}, \aal{Cingulum\_Ant}, \aal{Cingulum\_Post}, \aal{Hippocampus} (by convention), \aal{Angular}, \aal{Precuneus} and \aal{Temporal\_Mid}.
+
+\paragraph{Unassigned (8 regions).}
+\aal{Caudate}, \aal{Putamen}, \aal{Pallidum} and \aal{Thalamus}.
+
+\section*{Caveats}
+
+\begin{itemize}
+\item AAL regions are anatomical, so large regions span several Yeo networks, and a single label per region is always an approximation.
+\item Seven regions have an overlap fraction below 0.5 (the chosen network holds less than half of the region's Yeo-labelled voxels): \aal{Hippocampus} (0.33, convention), \aal{Temporal\_Inf} (0.36), \aal{Precuneus} (0.38), \aal{Frontal\_Inf\_Oper} (0.38), \aal{Supp\_Motor\_Area} (0.40), \aal{Cingulum\_Mid} (0.45) and \aal{Parietal\_Inf} (0.48, Frontoparietal against Dorsal attention).
+\item Pooling hemispheres hides a few within-hemisphere close calls: \aal{Frontal\_Inf\_Oper\_L} (Ventral attention 0.39 against Frontoparietal 0.37), \aal{Supp\_Motor\_Area\_L} (Ventral attention 0.36 against Somatomotor 0.33) and \aal{Precuneus\_R} (Dorsal attention 0.35 against Default 0.34).
+\item The Dorsal attention network holds only two regions, so network-level averages for it are noisy.
+\item Results depend slightly on the Yeo mask (thick or thin) and on the resampling direction.
+\end{itemize}
+
+\section*{Suggested Methods sentence}
+
+\begin{quote}
+Each AAL90 region was assigned to one of the seven Yeo et al.~(2011) resting-state networks according to maximal voxel overlap in MNI space (homologous regions pooled across hemispheres).
+Subcortical nuclei (caudate, putamen, pallidum, thalamus), which the cortical Yeo atlas does not cover, were excluded from network-level summaries, and hippocampus and amygdala, which lie outside the cortical Yeo mask, were assigned to the default and limbic networks, respectively.
+\end{quote}
+
+\section*{Changes from the earlier version}\label{sec:changes}
+
+The earlier mapping (December 2025) was built by hand from the literature and differed from the atlas overlap for nine regions.
+\aal{Frontal\_Sup} (Frontoparietal), \aal{Frontal\_Inf\_Orb} and \aal{Frontal\_Med\_Orb} (Limbic) and \aal{Cingulum\_Ant} (Ventral attention) are now Default.
+\aal{Frontal\_Mid\_Orb} (Limbic) is now Frontoparietal.
+\aal{Temporal\_Sup} (Ventral attention) is now Somatomotor.
+\aal{ParaHippocampal} and \aal{Temporal\_Inf} (Default) are now Limbic.
+\aal{Parietal\_Inf} is now Frontoparietal only; earlier copies placed it in Dorsal attention, or in both Dorsal attention and Frontoparietal.
+In addition, the example notebook listed \aal{Frontal\_Mid\_Orb} twice in Limbic and omitted \aal{Frontal\_Med\_Orb}, and the four subcortical nuclei formed an extra ``Subcortical'' block, which is now removed.
+Analyses that used the earlier mapping should be rerun.
+
+\section*{Reference table}
+
+Table~\ref{tab:yeo7} lists every region.
+``LLRR idx'' is the 1-based position in the standard AAL order (L1..L45, then R1..R45).
+``Data idx'' is the position in the mirrored order of \texttt{SC\_AAL90.mat} (L1..L45, then R45..R1).
+``Overlap'' is the fraction of the region's Yeo-labelled voxels (left and right pooled) that fall in the chosen network, and ``Coverage'' is the fraction of the region's voxels that carry any Yeo label.
+
+\begingroup\small\setlength{\tabcolsep}{4pt}
+\begin{longtable}{lllrrrl}
+\caption{Assignment of AAL90 regions to Yeo7 networks (from \texttt{aal90\_labels\_YEO7.csv}).}
 \label{tab:yeo7}\\
 \toprule
-Network & AAL label & AAL index \\
+Network & AAL label & LLRR idx & Data idx & Overlap & Coverage & Source \\
 \midrule
 \endfirsthead
 \toprule
-Network & AAL label & AAL index \\
+Network & AAL label & LLRR idx & Data idx & Overlap & Coverage & Source \\
 \midrule
 \endhead
 \midrule
-\multicolumn{3}{r}{\emph{continued on next page}} \\
+\multicolumn{7}{r}{\emph{continued on next page}} \\
 \endfoot
 \bottomrule
 \endlastfoot
-Default Mode & Frontal\_Sup\_Medial\_L & 12 \\
- & Frontal\_Sup\_Medial\_R & 57 \\
- & Cingulum\_Post\_L & 18 \\
- & Cingulum\_Post\_R & 63 \\
- & Hippocampus\_L & 19 \\
- & Hippocampus\_R & 64 \\
- & ParaHippocampal\_L & 20 \\
- & ParaHippocampal\_R & 65 \\
- & Angular\_L & 33 \\
- & Angular\_R & 78 \\
- & Precuneus\_L & 34 \\
- & Precuneus\_R & 79 \\
- & Temporal\_Mid\_L & 43 \\
- & Temporal\_Mid\_R & 88 \\
- & Temporal\_Inf\_L & 45 \\
- & Temporal\_Inf\_R & 90 \\
+Visual & Calcarine\_L & 22 & 22 & 0.947 & 0.801 & overlap \\
+ & Calcarine\_R & 67 & 69 & 0.947 & 0.801 & overlap \\
+ & Cuneus\_L & 23 & 23 & 0.894 & 0.842 & overlap \\
+ & Cuneus\_R & 68 & 68 & 0.894 & 0.842 & overlap \\
+ & Lingual\_L & 24 & 24 & 0.998 & 0.837 & overlap \\
+ & Lingual\_R & 69 & 67 & 0.998 & 0.837 & overlap \\
+ & Occipital\_Sup\_L & 25 & 25 & 0.877 & 0.753 & overlap \\
+ & Occipital\_Sup\_R & 70 & 66 & 0.877 & 0.753 & overlap \\
+ & Occipital\_Mid\_L & 26 & 26 & 0.745 & 0.834 & overlap \\
+ & Occipital\_Mid\_R & 71 & 65 & 0.745 & 0.834 & overlap \\
+ & Occipital\_Inf\_L & 27 & 27 & 0.944 & 0.799 & overlap \\
+ & Occipital\_Inf\_R & 72 & 64 & 0.944 & 0.799 & overlap \\
+ & Fusiform\_L & 28 & 28 & 0.621 & 0.867 & overlap \\
+ & Fusiform\_R & 73 & 63 & 0.621 & 0.867 & overlap \\
 \midrule
-Dorsal Attention & Parietal\_Sup\_L & 30 \\
- & Parietal\_Sup\_R & 75 \\
- & Parietal\_Inf\_L & 31 \\
- & Parietal\_Inf\_R & 76 \\
+Somatomotor & Precentral\_L & 1 & 1 & 0.597 & 0.741 & overlap \\
+ & Precentral\_R & 46 & 90 & 0.597 & 0.741 & overlap \\
+ & Rolandic\_Oper\_L & 9 & 9 & 0.700 & 0.866 & overlap \\
+ & Rolandic\_Oper\_R & 54 & 82 & 0.700 & 0.866 & overlap \\
+ & Supp\_Motor\_Area\_L & 10 & 10 & 0.402 & 0.766 & overlap \\
+ & Supp\_Motor\_Area\_R & 55 & 81 & 0.402 & 0.766 & overlap \\
+ & Postcentral\_L & 29 & 29 & 0.783 & 0.789 & overlap \\
+ & Postcentral\_R & 74 & 62 & 0.783 & 0.789 & overlap \\
+ & Paracentral\_Lobule\_L & 35 & 35 & 0.933 & 0.681 & overlap \\
+ & Paracentral\_Lobule\_R & 80 & 56 & 0.933 & 0.681 & overlap \\
+ & Heschl\_L & 40 & 40 & 0.988 & 0.920 & overlap \\
+ & Heschl\_R & 85 & 51 & 0.988 & 0.920 & overlap \\
+ & Temporal\_Sup\_L & 41 & 41 & 0.627 & 0.864 & overlap \\
+ & Temporal\_Sup\_R & 86 & 50 & 0.627 & 0.864 & overlap \\
 \midrule
-Ventral Attention / Salience & Insula\_L & 15 \\
- & Insula\_R & 60 \\
- & Cingulum\_Ant\_L & 16 \\
- & Cingulum\_Ant\_R & 61 \\
- & Cingulum\_Mid\_L & 17 \\
- & Cingulum\_Mid\_R & 62 \\
- & SupraMarginal\_L & 32 \\
- & SupraMarginal\_R & 77 \\
- & Temporal\_Sup\_L & 41 \\
- & Temporal\_Sup\_R & 86 \\
+Dorsal attention & Parietal\_Sup\_L & 30 & 30 & 0.779 & 0.815 & overlap \\
+ & Parietal\_Sup\_R & 75 & 61 & 0.779 & 0.815 & overlap \\
 \midrule
-Frontal Control & Frontal\_Sup\_L & 2 \\
- & Frontal\_Sup\_R & 47 \\
- & Frontal\_Mid\_L & 4 \\
- & Frontal\_Mid\_R & 49 \\
- & Frontal\_Inf\_Oper\_L & 6 \\
- & Frontal\_Inf\_Oper\_R & 51 \\
- & Frontal\_Inf\_Tri\_L & 7 \\
- & Frontal\_Inf\_Tri\_R & 52 \\
+Ventral attention & Insula\_L & 15 & 15 & 0.617 & 0.863 & overlap \\
+ & Insula\_R & 60 & 76 & 0.617 & 0.863 & overlap \\
+ & Cingulum\_Mid\_L & 17 & 17 & 0.449 & 0.886 & overlap \\
+ & Cingulum\_Mid\_R & 62 & 74 & 0.449 & 0.886 & overlap \\
+ & SupraMarginal\_L & 32 & 32 & 0.599 & 0.854 & overlap \\
+ & SupraMarginal\_R & 77 & 59 & 0.599 & 0.854 & overlap \\
 \midrule
-Limbic & Frontal\_Sup\_Orb\_L & 3 \\
- & Frontal\_Sup\_Orb\_R & 48 \\
- & Frontal\_Mid\_Orb\_L & 5 \\
- & Frontal\_Mid\_Orb\_R & 50 \\
- & Frontal\_Inf\_Orb\_L & 8 \\
- & Frontal\_Inf\_Orb\_R & 53 \\
- & Olfactory\_L & 11 \\
- & Olfactory\_R & 56 \\
- & Frontal\_Med\_Orb\_L & 13 \\
- & Frontal\_Med\_Orb\_R & 58 \\
- & Rectus\_L & 14 \\
- & Rectus\_R & 59 \\
- & Amygdala\_L & 21 \\
- & Amygdala\_R & 66 \\
- & Temporal\_Pole\_Sup\_L & 42 \\
- & Temporal\_Pole\_Sup\_R & 87 \\
- & Temporal\_Pole\_Mid\_L & 44 \\
- & Temporal\_Pole\_Mid\_R & 89 \\
+Limbic & Frontal\_Sup\_Orb\_L & 3 & 3 & 0.716 & 0.804 & overlap \\
+ & Frontal\_Sup\_Orb\_R & 48 & 88 & 0.716 & 0.804 & overlap \\
+ & Olfactory\_L & 11 & 11 & 0.943 & 0.455 & overlap \\
+ & Olfactory\_R & 56 & 80 & 0.943 & 0.455 & overlap \\
+ & Rectus\_L & 14 & 14 & 0.917 & 0.867 & overlap \\
+ & Rectus\_R & 59 & 77 & 0.917 & 0.867 & overlap \\
+ & ParaHippocampal\_L & 20 & 20 & 0.537 & 0.684 & overlap \\
+ & ParaHippocampal\_R & 65 & 71 & 0.537 & 0.684 & overlap \\
+ & Amygdala\_L & 21 & 21 & 1.000 & 0.037 & convention \\
+ & Amygdala\_R & 66 & 70 & 1.000 & 0.037 & convention \\
+ & Temporal\_Pole\_Sup\_L & 42 & 42 & 0.550 & 0.733 & overlap \\
+ & Temporal\_Pole\_Sup\_R & 87 & 49 & 0.550 & 0.733 & overlap \\
+ & Temporal\_Pole\_Mid\_L & 44 & 44 & 0.647 & 0.741 & overlap \\
+ & Temporal\_Pole\_Mid\_R & 89 & 47 & 0.647 & 0.741 & overlap \\
+ & Temporal\_Inf\_L & 45 & 45 & 0.361 & 0.829 & overlap \\
+ & Temporal\_Inf\_R & 90 & 46 & 0.361 & 0.829 & overlap \\
 \midrule
-Somatomotor & Precentral\_L & 1 \\
- & Precentral\_R & 46 \\
- & Rolandic\_Oper\_L & 9 \\
- & Rolandic\_Oper\_R & 54 \\
- & Supp\_Motor\_Area\_L & 10 \\
- & Supp\_Motor\_Area\_R & 55 \\
- & Postcentral\_L & 29 \\
- & Postcentral\_R & 74 \\
- & Paracentral\_Lobule\_L & 35 \\
- & Paracentral\_Lobule\_R & 80 \\
- & Heschl\_L & 40 \\
- & Heschl\_R & 85 \\
+Frontoparietal & Frontal\_Mid\_L & 4 & 4 & 0.642 & 0.814 & overlap \\
+ & Frontal\_Mid\_R & 49 & 87 & 0.642 & 0.814 & overlap \\
+ & Frontal\_Mid\_Orb\_L & 5 & 5 & 0.649 & 0.807 & overlap \\
+ & Frontal\_Mid\_Orb\_R & 50 & 86 & 0.649 & 0.807 & overlap \\
+ & Frontal\_Inf\_Oper\_L & 6 & 6 & 0.379 & 0.775 & overlap \\
+ & Frontal\_Inf\_Oper\_R & 51 & 85 & 0.379 & 0.775 & overlap \\
+ & Frontal\_Inf\_Tri\_L & 7 & 7 & 0.572 & 0.738 & overlap \\
+ & Frontal\_Inf\_Tri\_R & 52 & 84 & 0.572 & 0.738 & overlap \\
+ & Parietal\_Inf\_L & 31 & 31 & 0.483 & 0.926 & overlap \\
+ & Parietal\_Inf\_R & 76 & 60 & 0.483 & 0.926 & overlap \\
 \midrule
-Visual & Calcarine\_L & 22 \\
- & Calcarine\_R & 67 \\
- & Cuneus\_L & 23 \\
- & Cuneus\_R & 68 \\
- & Lingual\_L & 24 \\
- & Lingual\_R & 69 \\
- & Occipital\_Sup\_L & 25 \\
- & Occipital\_Sup\_R & 70 \\
- & Occipital\_Mid\_L & 26 \\
- & Occipital\_Mid\_R & 71 \\
- & Occipital\_Inf\_L & 27 \\
- & Occipital\_Inf\_R & 72 \\
- & Fusiform\_L & 28 \\
- & Fusiform\_R & 73 \\
+Default & Frontal\_Sup\_L & 2 & 2 & 0.500 & 0.728 & overlap \\
+ & Frontal\_Sup\_R & 47 & 89 & 0.500 & 0.728 & overlap \\
+ & Frontal\_Inf\_Orb\_L & 8 & 8 & 0.597 & 0.755 & overlap \\
+ & Frontal\_Inf\_Orb\_R & 53 & 83 & 0.597 & 0.755 & overlap \\
+ & Frontal\_Sup\_Medial\_L & 12 & 12 & 0.841 & 0.789 & overlap \\
+ & Frontal\_Sup\_Medial\_R & 57 & 79 & 0.841 & 0.789 & overlap \\
+ & Frontal\_Med\_Orb\_L & 13 & 13 & 0.734 & 0.804 & overlap \\
+ & Frontal\_Med\_Orb\_R & 58 & 78 & 0.734 & 0.804 & overlap \\
+ & Cingulum\_Ant\_L & 16 & 16 & 0.692 & 0.840 & overlap \\
+ & Cingulum\_Ant\_R & 61 & 75 & 0.692 & 0.840 & overlap \\
+ & Cingulum\_Post\_L & 18 & 18 & 0.967 & 0.611 & overlap \\
+ & Cingulum\_Post\_R & 63 & 73 & 0.967 & 0.611 & overlap \\
+ & Hippocampus\_L & 19 & 19 & 0.329 & 0.022 & convention \\
+ & Hippocampus\_R & 64 & 72 & 0.329 & 0.022 & convention \\
+ & Angular\_L & 33 & 33 & 0.779 & 0.834 & overlap \\
+ & Angular\_R & 78 & 58 & 0.779 & 0.834 & overlap \\
+ & Precuneus\_L & 34 & 34 & 0.375 & 0.800 & overlap \\
+ & Precuneus\_R & 79 & 57 & 0.375 & 0.800 & overlap \\
+ & Temporal\_Mid\_L & 43 & 43 & 0.568 & 0.832 & overlap \\
+ & Temporal\_Mid\_R & 88 & 48 & 0.568 & 0.832 & overlap \\
 \midrule
-Subcortical extension & Caudate\_L & 36 \\
- & Caudate\_R & 81 \\
- & Putamen\_L & 37 \\
- & Putamen\_R & 82 \\
- & Pallidum\_L & 38 \\
- & Pallidum\_R & 83 \\
- & Thalamus\_L & 39 \\
- & Thalamus\_R & 84 \\
+Unassigned & Caudate\_L & 36 & 36 & -- & 0.011 & -- \\
+ & Caudate\_R & 81 & 55 & -- & 0.011 & -- \\
+ & Putamen\_L & 37 & 37 & -- & 0.014 & -- \\
+ & Putamen\_R & 82 & 54 & -- & 0.014 & -- \\
+ & Pallidum\_L & 38 & 38 & -- & 0.000 & -- \\
+ & Pallidum\_R & 83 & 53 & -- & 0.000 & -- \\
+ & Thalamus\_L & 39 & 39 & -- & 0.000 & -- \\
+ & Thalamus\_R & 84 & 52 & -- & 0.000 & -- \\
 \end{longtable}
+\endgroup
 
 \begin{thebibliography}{9}
 
 \bibitem{yeo2011}
-B. T. Thomas Yeo, Fenna M. Krienen, Jorge Sepulcre, Mert R. Sabuncu, Danial Lashkari,
-Marisa Hollinshead, Joshua L. Roffman, Jordan W. Smoller, Lilla Z\"{o}llei, Jonathan R.
-Polimeni, Bruce Fischl, Hesheng Liu, and Randy L. Buckner. The organization of the human
-cerebral cortex estimated by intrinsic functional connectivity. \emph{Journal of
-Neurophysiology}, 106(3):1125--1165, 2011.
+B. T. Thomas Yeo, Fenna M. Krienen, Jorge Sepulcre, Mert R. Sabuncu, Danial Lashkari, Marisa Hollinshead, Joshua L. Roffman, Jordan W. Smoller, Lilla Z\"{o}llei, Jonathan R. Polimeni, Bruce Fischl, Hesheng Liu, and Randy L. Buckner.
+The organization of the human cerebral cortex estimated by intrinsic functional connectivity.
+\emph{Journal of Neurophysiology}, 106(3):1125--1165, 2011.
+\href{https://doi.org/10.1152/jn.00338.2011}{doi:10.1152/jn.00338.2011}.
 
 \bibitem{tzourio2002}
-N. Tzourio-Mazoyer, B. Landeau, D. Papathanassiou, F. Crivello, O. Etard, N. Delcroix,
-B. Mazoyer, and M. Joliot. Automated anatomical labeling of activations in SPM using a
-macroscopic anatomical parcellation of the MNI MRI single-subject brain.
+N. Tzourio-Mazoyer, B. Landeau, D. Papathanassiou, F. Crivello, O. Etard, N. Delcroix, B. Mazoyer, and M. Joliot.
+Automated anatomical labeling of activations in SPM using a macroscopic anatomical parcellation of the MNI MRI single-subject brain.
 \emph{NeuroImage}, 15(1):273--289, 2002.
+\href{https://doi.org/10.1006/nimg.2001.0978}{doi:10.1006/nimg.2001.0978}.
 
-\bibitem{rolls2020}
-Edmund T. Rolls, Ching-Chang Huang, Chia-Chien Lin, Jian Feng, and Marc Joliot.
-Automated anatomical labelling atlas 3. \emph{NeuroImage}, 206:116189, 2020.
-
-\bibitem{raichle2001}
-Marcus E. Raichle, Ann M. MacLeod, Abraham Z. Snyder, William J. Powers, Debra A.
-Gusnard, and Gordon L. Shulman. A default mode of brain function. \emph{Proceedings of
-the National Academy of Sciences of the United States of America}, 98(2):676--682,
-2001.
-
-\bibitem{corbetta2002}
-Maurizio Corbetta and Gordon L. Shulman. Control of goal-directed and stimulus-driven
-attention in the brain. \emph{Nature Reviews Neuroscience}, 3(3):201--215, 2002.
-
-\bibitem{seeley2007}
-William W. Seeley, Vinod Menon, Alan F. Schatzberg, Jeffrey Keller, Gary H. Glover,
-Hilary Kenna, Allan L. Reiss, and Michael D. Greicius. Dissociable intrinsic
-connectivity networks for salience processing and executive control. \emph{Journal of
-Neuroscience}, 27(9):2349--2356, 2007.
+\bibitem{doucet2019}
+Gaelle E. Doucet, Won Hee Lee, and Sophia Frangou.
+Evaluation of the spatial variability in the major resting-state networks across human brain functional atlases.
+\emph{Human Brain Mapping}, 40(15):4577--4587, 2019.
+\href{https://doi.org/10.1002/hbm.24722}{doi:10.1002/hbm.24722}.
 
 \end{thebibliography}
 

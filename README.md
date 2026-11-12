@@ -1,29 +1,75 @@
 # AAL-90 to Yeo7 Mapping
 
-This folder collects lightweight resources for assigning the 90 parcels of the Automated Anatomical Labeling (AAL-90) atlas to the canonical Yeo 2011 7-network parcellation (Yeo7). It includes the atlas image, the structural connectivity (SC) matrix used in our analyses, the manuscript describing the mapping, and a worked Python notebook that demonstrates how to load the data and aggregate parcel-wise measures at the network level.
+Resources for assigning the 90 cerebral regions of the Automated Anatomical Labeling atlas (AAL-90) to the seven resting-state networks of Yeo et al. (2011) (Yeo7).
+Each region takes the Yeo network it overlaps most in MNI space.
 
-## Repository contents
+> **Corrected 2026-11-12.** The earlier mapping was hand-made and differed from the atlas overlap for 9 regions; some copies also listed `Frontal_Mid_Orb` twice and omitted `Frontal_Med_Orb`, or placed `Parietal_Inf` in two networks.
+> The subcortical "extension" block has been removed.
+> Analyses that used the earlier mapping should be rerun.
+> See the "Changes" section of `AAL90_to_YEO7_mapping.pdf`.
 
-- `AAL90_atlas.nii` – 3D NIfTI volume with the AAL-90 parcellation in MNI space (left-hemisphere parcels first, followed by right-hemisphere parcels). Use this file to extract parcel-wise time-series or images that need to be summarized per network.
-- `SC_AAL90.mat` – MATLAB file with a 90×90 structural connectivity matrix aligned to the atlas ordering. The example notebook shows how to infer whether the ordering is L→R blockwise (`non-symmetric`) or interleaved.
-- `functions_infer_aal90_order_v1.py` – standalone, importable module used by the notebook to infer parcel ordering from a 90×90 SC/FC matrix via a block-density-ratio statistic (robust to the corpus-callosum crossing-fibre problem that fools a naive diagonal-based check). Also exposes `canonicalize_to_llrr` and an exact centroid-based check (`order_from_centroids`) for when MNI coordinates are available.
-- `YEO7_AAL90.txt` – authoritative source for the AAL90→Yeo7 label dictionaries (`Yeo7_to_AAL90_labels`, cortex only, and `Yeo7subcort_to_AAL90_labels`, with a subcortical extension) plus the canonical AAL-90 label order. The notebook mirrors these dictionaries directly.
-- `AAL90_to_YEO7_mapping.pdf` (source: `AAL90_to_YEO7_mapping.tex`) – manuscript detailing the rationale for each Yeo7 network definition and reference tables listing the exact parcel names and 1-based indices assigned to every network, including the subcortical extension.
-- `example_AAL90_to_YEO7_mapping.ipynb` – Python walkthrough (NumPy, SciPy, Matplotlib) that:
-  1. loads `SC_AAL90.mat`, visualizes the connectivity matrix, and infers the parcel ordering using `functions_infer_aal90_order_v1.infer_aal90_order`;
-  2. defines `Yeo7_to_AAL90_labels` (7 cortical networks: Visual, Somatomotor, Dorsal Attention, Ventral Attention/Salience, Limbic, Frontal Control, Default Mode) and `Yeo7subcort_to_AAL90_labels` (same 7 plus a Subcortical Extension network covering Caudate/Putamen/Pallidum/Thalamus), matching `YEO7_AAL90.txt`;
-  3. builds network→index lookups, and demonstrates how to aggregate parcel-wise vectors (here synthetic values) into group-level bar plots per network.
+## Contents
 
-## Getting started
+| File | What it is |
+|---|---|
+| `aal90_labels_YEO7.csv` | **Reference table.** One row per region: `index,label,class,yeo7_network,yeo7_network_name,overlap_frac,yeo_coverage,source`. Rows are in the mirrored data order (see below). |
+| `make_aal90_labels_YEO7.py` | Builds the CSV from the atlases (needs `nilearn`, which downloads AAL SPM12 and Yeo 2011). |
+| `YEO7_AAL90.txt` | Python-readable dictionary `Yeo7_to_AAL90_labels` (network → AAL labels, built from the CSV) plus the AAL label orders `AAL_labels_non_symmetric` (LLRR) and `AAL_labels_data_order` (mirrored). Load with `exec(open('YEO7_AAL90.txt').read(), ns)`. |
+| `example_AAL90_to_YEO7_mapping.ipynb` | Worked example: loads `SC_AAL90.mat`, infers its parcel order, builds network → index lookups and plots network averages of synthetic data. |
+| `functions_infer_aal90_order_v1.py` | Infers the parcel order of a 90×90 SC/FC matrix (`infer_aal90_order`) and checks a label list against it (`assert_aal90_order`). |
+| `AAL90_to_YEO7_mapping.pdf` / `.tex` | Method, resulting networks, caveats, a suggested Methods sentence and the full region table. |
+| `AAL90_atlas.nii` | AAL-90 volume in MNI space, SPM interleaved label values (odd = left, even = right; 1 = Precentral_L, 2 = Precentral_R). |
+| `SC_AAL90.mat` | 90×90 structural connectivity matrix in **mirrored** order. |
 
-1. **Environment** – Install Python ≥3.9 with `numpy`, `scipy`, and `matplotlib`. Launch Jupyter Lab/Notebook if you want to run the demo notebook.
-2. **Inspect the atlas** – Load `AAL90_atlas.nii` with your preferred neuroimaging library (`nibabel`, `nilearn`, etc.) to extract parcel masks or to verify registrations.
-3. **Map parcels to networks** – Either read `AAL90_to_YEO7_mapping.pdf` for human-readable tables, or import `Yeo7_to_AAL90_labels` / `Yeo7subcort_to_AAL90_labels` from `YEO7_AAL90.txt` (or the notebook) to automatically translate AAL parcel-level metrics (BOLD amplitudes, dynamical measures, etc.) into Yeo7 network summaries. Use the subcortical-extension variant if you need all 90 parcels covered; the cortex-only variant leaves Caudate/Putamen/Pallidum/Thalamus unassigned.
-4. **Reproducibility** – When using or extending the mapping, cite the references listed in `AAL90_to_YEO7_mapping.pdf`, especially the AAL atlas papers and Yeo et al. 2011 (the source of the 7-network parcellation).
+## Assignment criterion
 
-## Notes and suggestions
+1. Resample AAL (SPM12) onto the 1 mm Yeo 2011 grid (7 networks, liberal mask) with nearest-neighbour interpolation.
+2. Pool the voxels of the left and right homologues of each region.
+3. Count Yeo-labelled voxels per network; the network with the most voxels wins.
 
-- The atlas and SC files assume the standard (left-all, then right-all) ordering recommended for AAL-90. `functions_infer_aal90_order_v1.infer_aal90_order` verifies this automatically for any SC/FC matrix you load, and raises rather than guessing if the decision margin is too small — resolve against the atlas label file in that case.
-- `Yeo7subcort_to_AAL90_labels` is built by extending `Yeo7_to_AAL90_labels` (`{**Yeo7_to_AAL90_labels, "Subcortical extension": [...]}`) rather than duplicating every entry, so the two dictionaries cannot drift out of sync when the cortical mapping is edited.
-- Feel free to export the network tables to CSV/JSON by extending the notebook; the dictionaries already contain the parcel names needed to do so programmatically.
-- If you adapt the mapping (e.g., to change limbic or subcortical assignments), keep `YEO7_AAL90.txt`, the notebook, and `AAL90_to_YEO7_mapping.tex` in sync so `AAL90_to_YEO7_mapping.pdf` remains the authoritative reference. Recompile with `pdflatex AAL90_to_YEO7_mapping.tex` (run twice for stable pagination).
+Exceptions:
+
+- **Caudate, Putamen, Pallidum, Thalamus are unassigned.** Yeo 2011 is cortex-only. Keep them in region-level and whole-brain analyses; network summaries use the other 82 regions.
+- **Hippocampus → Default, Amygdala → Limbic** by convention (under 10% of their voxels carry a Yeo label).
+
+| Network | Regions (left and right of each) | n |
+|---|---|---|
+| Visual | Calcarine, Cuneus, Lingual, Occipital_Sup, Occipital_Mid, Occipital_Inf, Fusiform | 14 |
+| Somatomotor | Precentral, Rolandic_Oper, Supp_Motor_Area, Postcentral, Paracentral_Lobule, Heschl, Temporal_Sup | 14 |
+| Dorsal attention | Parietal_Sup | 2 |
+| Ventral attention / salience | Insula, Cingulum_Mid, SupraMarginal | 6 |
+| Limbic | Frontal_Sup_Orb, Olfactory, Rectus, ParaHippocampal, Amygdala, Temporal_Pole_Sup, Temporal_Pole_Mid, Temporal_Inf | 16 |
+| Frontoparietal control | Frontal_Mid, Frontal_Mid_Orb, Frontal_Inf_Oper, Frontal_Inf_Tri, Parietal_Inf | 10 |
+| Default | Frontal_Sup, Frontal_Inf_Orb, Frontal_Sup_Medial, Frontal_Med_Orb, Cingulum_Ant, Cingulum_Post, Hippocampus, Angular, Precuneus, Temporal_Mid | 20 |
+| *(unassigned)* | Caudate, Putamen, Pallidum, Thalamus | 8 |
+
+Assignments that are not clean-cut (overlap fraction below 0.5) are listed in the PDF.
+
+## Parcel order
+
+`SC_AAL90.mat` (and the sleep W/N1/N2/N3 and COMA AAL-90 data it goes with) is in **mirrored** order: L1..L45 in standard AAL order, then R45..R1.
+Column `c ≥ 45` holds right region `89 − c`.
+`infer_aal90_order` decides among LLRR, mirrored and interleaved by how similar the LL and RR blocks are once homotopic regions are paired (on `SC_AAL90.mat`: mirrored r = 0.97, LLRR 0.19, interleaved 0.12).
+Always match regions **by name**, using the label list that matches your data order (`AAL_labels_data_order` for these data).
+
+## Quick use
+
+```python
+import csv
+net = {r["label"]: r["yeo7_network_name"] for r in csv.DictReader(open("aal90_labels_YEO7.csv"))}
+labels = ...  # the 90 AAL labels in your data's column order
+idx = {}
+for i, lab in enumerate(labels):
+    if net[lab]:                      # skip unassigned subcortical regions
+        idx.setdefault(net[lab], []).append(i)
+```
+
+## Suggested Methods sentence
+
+> Each AAL90 region was assigned to one of the seven Yeo et al. (2011) resting-state networks according to maximal voxel overlap in MNI space (homologous regions pooled across hemispheres). Subcortical nuclei (caudate, putamen, pallidum, thalamus), which the cortical Yeo atlas does not cover, were excluded from network-level summaries, and hippocampus and amygdala, which lie outside the cortical Yeo mask, were assigned to the default and limbic networks, respectively.
+
+## References
+
+- Yeo BTT et al. (2011) *J Neurophysiol* 106:1125–1165. doi:10.1152/jn.00338.2011
+- Tzourio-Mazoyer N et al. (2002) *NeuroImage* 15:273–289. doi:10.1006/nimg.2001.0978
+- Doucet GE, Lee WH, Frangou S (2019) *Hum Brain Mapp* 40:4577–4587. doi:10.1002/hbm.24722
