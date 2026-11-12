@@ -6,7 +6,7 @@ Each region takes the Yeo network it overlaps most in MNI space.
 > **Corrected 2026-11-12.** The earlier mapping was hand-made and differed from the atlas overlap for 9 regions; some copies also listed `Frontal_Mid_Orb` twice and omitted `Frontal_Med_Orb`, or placed `Parietal_Inf` in two networks.
 > The subcortical "extension" block has been removed.
 > Analyses that used the earlier mapping should be rerun.
-> See the "Changes" section of `AAL90_to_YEO7_mapping.pdf`.
+> See the "Changes" section of [`AAL90_to_YEO7_mapping.md`](AAL90_to_YEO7_mapping.md#changes-from-the-earlier-version).
 
 ## Contents
 
@@ -17,7 +17,8 @@ Each region takes the Yeo network it overlaps most in MNI space.
 | `YEO7_AAL90.txt` | Python-readable dictionary `Yeo7_to_AAL90_labels` (network → AAL labels, built from the CSV) plus the AAL label orders `AAL_labels_non_symmetric` (LLRR) and `AAL_labels_data_order` (mirrored). Load with `exec(open('YEO7_AAL90.txt').read(), ns)`. |
 | `example_AAL90_to_YEO7_mapping.ipynb` | Worked example: loads `SC_AAL90.mat`, infers its parcel order, builds network → index lookups and plots network averages of synthetic data. |
 | `functions_infer_aal90_order_v1.py` | Infers the parcel order of a 90×90 SC/FC matrix (`infer_aal90_order`) and checks a label list against it (`assert_aal90_order`). |
-| `AAL90_to_YEO7_mapping.pdf` / `.tex` | Method, resulting networks, caveats, a suggested Methods sentence and the full region table. |
+| `AAL90_to_YEO7_mapping.md` | Full documentation in Markdown: method, resulting networks, caveats, a suggested Methods sentence, changes from the earlier version and the region table. |
+| `AAL90_to_YEO7_mapping.pdf` / `.tex` | Same content as a PDF. |
 | `AAL90_atlas.nii` | AAL-90 volume in MNI space, SPM interleaved label values (odd = left, even = right; 1 = Precentral_L, 2 = Precentral_R). |
 | `SC_AAL90.mat` | 90×90 structural connectivity matrix in **mirrored** order. |
 
@@ -43,7 +44,7 @@ Exceptions:
 | Default | Frontal_Sup, Frontal_Inf_Orb, Frontal_Sup_Medial, Frontal_Med_Orb, Cingulum_Ant, Cingulum_Post, Hippocampus, Angular, Precuneus, Temporal_Mid | 20 |
 | *(unassigned)* | Caudate, Putamen, Pallidum, Thalamus | 8 |
 
-Assignments that are not clean-cut (overlap fraction below 0.5) are listed in the PDF.
+Assignments that are not clean-cut (overlap fraction below 0.5) are listed in [`AAL90_to_YEO7_mapping.md`](AAL90_to_YEO7_mapping.md#caveats).
 
 ## Parcel order
 
